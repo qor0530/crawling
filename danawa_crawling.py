@@ -3,17 +3,18 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
-# 나중에 빠르게 할때 병렬화 공부 
-# from multiprocessing import Pool 
+
+from multiprocessing import Pool 
+
 import pandas as pd
 
+descriptions = []
+names = []
 url = 'https://github.com/sammy310/Danawa-Crawler/raw/master/crawl_data/Laptop.csv'
 df = pd.read_csv(url, usecols=['Id'])
 
-print(df)
 dic_list = df['Id'].to_list()
-print(dic_list)
-for id in dic_list:
+for id in dic_list[:5]:
     check_url = f"https://prod.danawa.com/info/?pcode={id}&cate=112758"
     url = check_url
     chrome_options = Options()
@@ -28,4 +29,10 @@ for id in dic_list:
     driver.get(url)  # 페이지 로딩
     web = BeautifulSoup(driver.page_source, 'html.parser')  # 로딩된 페이지의 소스코드를 다시 가져옴
     desc = web.find('meta', property="og:description")['content']
-    print(desc[32:]) # 좀 더 스마트한 방법으로 ... ㅎ
+    name = web.find('title')
+    descriptions.append(desc[32:])
+    names.append(name.text)
+    print(desc, name.text)
+dedf = pd.DataFrame({'name':names, 'desc':descriptions})
+
+dedf.to_csv("descriptions.csv", index=False)
