@@ -32,7 +32,6 @@ def crawling(id_list):
     desc = web.find('meta', property="og:description")['content']
     name = web.find('title')
     price = web.find('span','lwst_prc')
-    print(name.text, price.text)
     try:
         return name.text, desc, price.text
     except:
@@ -41,7 +40,7 @@ def crawling(id_list):
 if __name__ == '__main__':
     start = time.time()
     id_list = get_id()
-    id_list = id_list[:100]
+    # id_list = id_list[:100]
     names = []
     descriptions = []
     prices = []
