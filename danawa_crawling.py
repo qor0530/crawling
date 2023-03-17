@@ -33,8 +33,10 @@ def crawling(id_list):
     name = web.find('title')
     price = web.find('span','lwst_prc')
     print(name.text, price.text)
-    return name.text, desc, price.text
-    
+    try:
+        return name.text, desc, price.text
+    except:
+        return name.text, desc, None
 
 if __name__ == '__main__':
     start = time.time()
