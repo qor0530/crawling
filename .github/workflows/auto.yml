@@ -1,0 +1,54 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Auto Crawler
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Install Chromdriver
+      run: |
+        if ![ -e 'chromedriver']; then
+          echo 'chromedriver not exist!'
+          sudo apt-get install google-chrome-stable
+          wget https://chromedriver.storage.googleapis.com/2.40/chromedriver_linux64.zip
+          unzip ./chromedriver_linux64.zip
+          rm -rf ./chromedriver_linux64.zip
+        else
+          echo 'chromedriver already exist!'
+        fi
+    - name: Run Crawler
+      run: |
+        python danawa_crawler.py
+      env:
+        MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+    - name: Commits
+      run: |
+        git config --local user.email "kipper098@gmail.com"
+        git config --local user.name "Auto_Crawler_Bot"
+        git add --all
+        git commit -m "Bot - Auto Crawl | $(date -d '+9 hour' +'%Y-%m-%d %H:%M:%S')"
+    - name: Push
+      uses: ad-m/github-push-action@master
+      with:
+        branch: 'master'
+        github_token: ${{ secrets.MY_GITHUB_TOKEN }}
