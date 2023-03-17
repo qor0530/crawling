@@ -30,7 +30,7 @@ jobs:
         
     - name: Run Crawler
       run: |
-        python danawa_crawler.py
+        python danawa_crawling.py
       env:
         MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
     - name: Commits
