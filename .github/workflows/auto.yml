@@ -32,7 +32,7 @@ jobs:
       run: |
         python danawa_crawling.py
       env:
-        MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        MY_GITHUB_TOKEN: ${{ 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 }}
     - name: Commits
       run: |
         git config --local user.email "qorwhdghk12@gmail.com"
@@ -43,4 +43,4 @@ jobs:
       uses: ad-m/github-push-action@master
       with:
         branch: 'master'
-        github_token: ${{ secrets.MY_GITHUB_TOKEN }}
+        github_token: ${{ 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 }}
