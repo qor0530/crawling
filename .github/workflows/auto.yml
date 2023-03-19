@@ -30,12 +30,6 @@ jobs:
         python -m pip install pandas
         python -m pip install webdriver_manager
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Install Chromdriver
-      run: |
-    - name: Install Chromdriver
-      run: |
-    - name: Install Chromdriver
-      run: |        
     - name: Run Crawler
       run: |
         python danawa_crawling.py
