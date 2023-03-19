@@ -29,9 +29,7 @@ jobs:
         python -m pip install multiprocessing
         python -m pip install pandas
         python -m pip install webdriver_manager
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Run Crawler
-      run: |
+        pip install -r requirements.txt
         python danawa_crawling.py
       env:
         MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
