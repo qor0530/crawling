@@ -22,7 +22,7 @@ def get_id():
     # print(id_list)
     return id_list
 
-def crawling(id_list):
+def crawling_danawa(id_list):
     check_url = f"https://prod.danawa.com/info/?pcode={id_list}&cate=112758"
     url = check_url
     service = Service(executable_path=ChromeDriverManager().install())
@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     # 병렬화 2 or 3
     with multiprocessing.Pool(2) as p: 
-        result = p.map(crawling, id_list)
+        result = p.map(crawling_danawa, id_list)
     for i in result:
         names.append(i[0])
         descriptions.append(i[1])
