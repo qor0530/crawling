@@ -31,6 +31,7 @@ jobs:
         python -m pip install multiprocessing
         python -m pip install pandas
         python -m pip install webdriver_manager
+        python -m pip install setuptools
         pip install -r requirements.txt
         python danawa_crawling.py
       env:
