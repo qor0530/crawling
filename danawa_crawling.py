@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import multiprocessing
 import pandas as pd
 import time
-
+LIST_LENGTH = 100
 chrome_options = Options()
 chrome_options.add_experimental_option("detach", True)
 chrome_options.add_experimental_option("excludeSwitches", ['enable-logging'])
@@ -36,22 +36,28 @@ def crawling_danawa(id_list):
         return name.text, desc, price.text
     except:
         return name.text, desc, None
+def divide_list(l, n): 
+    # 리스트 l의 길이가 n이면 계속 반복
+    for i in range(0, len(l), n): 
+        yield l[i:i + n] 
 
 if __name__ == '__main__':
     start = time.time()
     id_list = get_id()
-    # id_list = id_list[:100]
+    id_lists = list(divide_list(id_list, LIST_LENGTH))
     names = []
     descriptions = []
     prices = []
 
     # 병렬화 2 or 3
-    with multiprocessing.Pool(2) as p: 
-        result = p.map(crawling_danawa, id_list)
-    for i in result:
-        names.append(i[0])
-        descriptions.append(i[1])
-        prices.append(i[2])
+    for ids in id_lists:
+        result = []
+        with multiprocessing.Pool(2) as p: 
+            result = p.map(crawling_danawa, ids)
+        for i in result:
+            names.append(i[0])
+            descriptions.append(i[1])
+            prices.append(i[2])
     # 기본
     # for id in id_list:
     #     name, desc, price = crawling(id)
