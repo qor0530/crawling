@@ -28,7 +28,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install setuptools
         python -m pip install selenium
-        python -m pip install bs4
+        pip install bs4
         python -m pip install multiprocessing
         python -m pip install pandas
         python -m pip install webdriver_manager
