@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import multiprocessing
 import pandas as pd
 import time
-LIST_LENGTH = 100
+LIST_LENGTH = 10
 chrome_options = Options()
 chrome_options.add_experimental_option("detach", True)
 chrome_options.add_experimental_option("excludeSwitches", ['enable-logging'])
@@ -14,7 +14,8 @@ chrome_options.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 1
 chrome_options.add_argument('headless')
 chrome_options.add_argument('window-size=1920x1080')
 chrome_options.add_argument("disable-gpu")
-
+service = Service(executable_path=ChromeDriverManager().install())
+driver = webdriver.Chrome(service=service, options=chrome_options)
 def get_id():
     url = 'https://github.com/sammy310/Danawa-Crawler/raw/master/crawl_data/Laptop.csv'
     df = pd.read_csv(url, usecols=['Id'])
@@ -23,41 +24,35 @@ def get_id():
     return id_list
 
 def crawling_danawa(id_list):
-    check_url = f"https://prod.danawa.com/info/?pcode={id_list}&cate=112758"
-    url = check_url
-    service = Service(executable_path=ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+    url = f"https://prod.danawa.com/info/?pcode={id_list}&cate=112758"
     driver.get(url)  # 페이지 로딩
     web = BeautifulSoup(driver.page_source, 'html.parser')  # 로딩된 페이지의 소스코드를 다시 가져옴
     desc = web.find('meta', property="og:description")['content']
     name = web.find('title')
     price = web.find('span','lwst_prc')
+    print(name.text)
     try:
         return name.text, desc, price.text
     except:
         return name.text, desc, None
-def divide_list(l, n): 
-    # 리스트 l의 길이가 n이면 계속 반복
-    for i in range(0, len(l), n): 
-        yield l[i:i + n] 
 
 if __name__ == '__main__':
     start = time.time()
     id_list = get_id()
-    id_lists = list(divide_list(id_list, LIST_LENGTH))
+    # id_lists = list(divide_list(id_list, LIST_LENGTH))
     names = []
     descriptions = []
     prices = []
 
     # 병렬화 2 or 3
-    for ids in id_lists:
-        result = []
-        with multiprocessing.Pool(2) as p: 
-            result = p.map(crawling_danawa, ids)
-        for i in result:
-            names.append(i[0])
-            descriptions.append(i[1])
-            prices.append(i[2])
+    # for ids in id_list:
+    # result = []
+    with multiprocessing.Pool(2) as p: 
+        result = p.map(crawling_danawa, id_list)
+    for i in result:
+        names.append(i[0])
+        descriptions.append(i[1])
+        prices.append(i[2])
     # 기본
     # for id in id_list:
     #     name, desc, price = crawling(id)
